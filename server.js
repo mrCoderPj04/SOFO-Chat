@@ -3,7 +3,10 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = parseInt(process.env.PORT, 10) || 3000;
-const PUBLIC_DIR = path.join(__dirname, 'dist', 'pjsofonic-connect-web', 'browser');
+let PUBLIC_DIR = path.join(__dirname, 'dist', 'pjsofonic-connect-web', 'browser');
+if (!fs.existsSync(PUBLIC_DIR)) {
+  PUBLIC_DIR = path.join(__dirname, 'dist', 'pjsofonic-connect-web');
+}
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=UTF-8',
