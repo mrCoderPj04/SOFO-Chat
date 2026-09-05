@@ -15,7 +15,7 @@ export class ApiService {
       const customApi = localStorage.getItem('SOFO_API_URL');
       if (customApi) return customApi;
     }
-    return environment.apiUrl || 'http://localhost:8080/api';
+    return environment.apiUrl || 'https://backend-sofochat.onrender.com/api';
   }
 
   get<T>(path: string, params: any = {}): Observable<ApiResponse<T>> {

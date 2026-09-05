@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080/api',
-  wsUrl: 'ws://localhost:8080/ws',
+  apiUrl: 'https://backend-sofochat.onrender.com/api',
+  wsUrl: 'wss://backend-sofochat.onrender.com/ws',
   emsBackendUrl: 'https://erp-backend-1-02lc.onrender.com',
   supabase: {
     url: 'https://ffauweryjzpnskdaqcyp.supabase.co',

@@ -4,9 +4,10 @@ import { HttpClient } from '@angular/common/http';
 import { UserProfile, UserStatus } from '../models/models';
 import { tap, catchError } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
-export const CONNECT_BACKEND_URL = 'http://localhost:8080/api';
-export const EMS_REMOTE_URL = 'https://erp-backend-1-02lc.onrender.com';
+export const CONNECT_BACKEND_URL = environment.apiUrl || 'https://backend-sofochat.onrender.com/api';
+export const EMS_REMOTE_URL = environment.emsBackendUrl || 'https://erp-backend-1-02lc.onrender.com';
 
 export interface AuthLoginResponse {
   success: boolean;

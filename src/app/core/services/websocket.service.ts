@@ -35,7 +35,7 @@ export class WebSocketService {
     const user = this.authService.currentUser();
     if (!user) return;
 
-    let baseWs = environment.wsUrl || 'ws://localhost:8080/ws';
+    let baseWs = environment.wsUrl || 'wss://backend-sofochat.onrender.com/ws';
     if (typeof window !== 'undefined') {
       const customWs = localStorage.getItem('SOFO_WS_URL');
       if (customWs) {
