@@ -1,0 +1,91 @@
+<div class="dopamine-login-container">
+  <!-- Floating Animated Shapes & Emojis -->
+  <div class="floating-emoji float-1">✨</div>
+  <div class="floating-emoji float-2">⚡</div>
+  <div class="floating-emoji float-3">💖</div>
+  <div class="floating-emoji float-4">🚀</div>
+  <div class="floating-emoji float-5">🔥</div>
+  <div class="floating-emoji float-6">👾</div>
+
+  <!-- Giant Background Backdrop Typography -->
+  <div class="mega-bg-text">CONNECT</div>
+
+  <!-- Maximalist Card -->
+  <div class="dopamine-login-card">
+    <!-- Brand Header -->
+    <div class="brand-header">
+      <div class="dopamine-app-icon animate-pulse-glow">
+        <span class="material-symbols-rounded">chat_bubble</span>
+      </div>
+      <h1 class="gradient-text-animated title-text text-shadow-double">PJSOFONIC</h1>
+      <span class="subtitle-badge">⚡ EMS REAL-TIME CONNECT ⚡</span>
+    </div>
+
+    <!-- Login Form -->
+    <div class="form-container">
+      <div class="prompt-box">
+        <h2 class="prompt-title">EMS EMPLOYEE LOGIN</h2>
+        <p class="prompt-desc">Enter your official EMS credentials to access the chat universe.</p>
+      </div>
+
+      <form (ngSubmit)="submitLogin()" class="dopamine-form">
+        <!-- Input 1: Employee ID -->
+        <div class="input-wrapper">
+          <label class="dopamine-label">
+            <span class="label-star">★</span> EMPLOYEE ID:
+          </label>
+          <div class="field-container id-field">
+            <span class="material-symbols-rounded field-icon">badge</span>
+            <input type="text" 
+                   [(ngModel)]="employeeId" 
+                   name="employeeId"
+                   placeholder="Enter EMS ID (e.g. 1122)" 
+                   class="dopamine-input"
+                   autofocus 
+                   required />
+          </div>
+        </div>
+
+        <!-- Input 2: Password -->
+        <div class="input-wrapper">
+          <label class="dopamine-label">
+            <span class="label-star">★</span> EMS PASSWORD:
+          </label>
+          <div class="field-container pw-field">
+            <span class="material-symbols-rounded field-icon">lock</span>
+            <input [type]="showPassword ? 'text' : 'password'" 
+                   [(ngModel)]="password" 
+                   name="password"
+                   placeholder="Enter EMS Password" 
+                   class="dopamine-input"
+                   required />
+            <button type="button" class="pw-toggle-btn" (click)="showPassword = !showPassword">
+              <span class="material-symbols-rounded">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Error Feedback -->
+        <div *ngIf="errorMessage()" class="dopamine-error-pill animate-wiggle">
+          <span class="material-symbols-rounded">warning</span>
+          <span>{{ errorMessage() }}</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" 
+                class="glow-btn submit-btn" 
+                [disabled]="isLoading() || !employeeId.trim() || !password.trim()">
+          <span *ngIf="!isLoading()">ENTER CONNECT 🚀</span>
+          <span *ngIf="isLoading()">VERIFYING EMS... ⚡</span>
+          <span class="material-symbols-rounded" *ngIf="!isLoading()">arrow_forward</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Security Footer -->
+    <div class="dopamine-footer">
+      <span class="material-symbols-rounded">verified_user</span>
+      <span>100% EMS LIVE ENCRYPTED &bull; ZERO FAKE DATA</span>
+    </div>
+  </div>
+</div>

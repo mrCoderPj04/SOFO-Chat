@@ -1,0 +1,23 @@
+<aside class="pj-sidebar glass-panel" [class.collapsed]="isCollapsed">
+  <nav class="sidebar-nav">
+    <a *ngFor="let item of navItems" 
+       [routerLink]="item.route" 
+       routerLinkActive="active" 
+       class="nav-link" 
+       [title]="isCollapsed ? item.label : ''">
+      <span class="material-symbols-rounded nav-icon">{{ item.icon }}</span>
+      <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+      <div class="active-indicator"></div>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer" *ngIf="!isCollapsed">
+    <div class="ems-badge">
+      <span class="material-symbols-rounded badge-icon">verified_user</span>
+      <div class="badge-text">
+        <span class="badge-title">EMS SYNCED</span>
+        <span class="badge-sub">Enterprise Active</span>
+      </div>
+    </div>
+  </div>
+</aside>

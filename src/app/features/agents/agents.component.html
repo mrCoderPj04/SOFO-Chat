@@ -1,0 +1,53 @@
+<div class="ios-agents-container">
+  <div class="agents-header">
+    <h1 class="ios-large-title">EMS Directory 👥</h1>
+    <div class="ios-search-bar">
+      <span class="material-symbols-rounded search-icon">search</span>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Search EMS colleagues by Name or ID..." class="search-input" />
+    </div>
+  </div>
+
+  <div class="agents-list-scroll">
+    <div class="ems-directory-banner glass-card-static">
+      <span class="material-symbols-rounded lock-icon">verified_user</span>
+      <div class="banner-text">
+        <h4>PJSOFONIC EMS Directory</h4>
+        <p>Synchronized live corporate personnel records</p>
+      </div>
+    </div>
+
+    <div class="ios-contacts-group">
+      <div *ngIf="filteredAgents().length === 0" class="empty-state">
+        <p>No EMS colleagues found.</p>
+      </div>
+
+      <div *ngFor="let agent of filteredAgents()" class="ios-contact-row glass-card-static">
+        <div class="avatar-wrap">
+          <img [src]="agent.avatarUrl" class="contact-avatar" />
+          <span class="status-indicator" [ngClass]="'status-' + (agent.status || 'online').toLowerCase()"></span>
+        </div>
+
+        <div class="contact-info">
+          <div class="name-line">
+            <span class="agent-name">{{ agent.fullName }}</span>
+            <span class="ems-id-tag">EMS: {{ agent.employeeId }}</span>
+          </div>
+          <span class="agent-role">{{ agent.designation }} &bull; {{ agent.departmentName || 'Technology' }}</span>
+        </div>
+
+        <div class="row-actions">
+          <button class="ios-circle-action-btn" (click)="startChat(agent)" title="Chat">
+            <span class="material-symbols-rounded">chat</span>
+          </button>
+          <button class="ios-circle-action-btn video" (click)="meetAgent(agent)" title="Video Call">
+            <span class="material-symbols-rounded">videocam</span>
+          </button>
+          <button class="ios-circle-action-btn delete-btn" (click)="deleteAgent(agent, $event)" title="Delete Contact">
+            <span class="material-symbols-rounded">delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

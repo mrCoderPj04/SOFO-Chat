@@ -1,0 +1,188 @@
+<div class="dopamine-meeting-container">
+  <!-- Top Header -->
+  <div class="meeting-header">
+    <div class="header-main-row">
+      <h1 class="gradient-text-animated text-shadow-single main-title">MEETINGS 📹</h1>
+      <button class="dopamine-pill pill-1 active" (click)="activeTab.set('CREATE')">
+        <span class="material-symbols-rounded">video_call</span>
+        <span>Create Meeting</span>
+      </button>
+    </div>
+
+    <!-- Mode Selector Pills -->
+    <div class="mode-pills-row">
+      <button class="dopamine-pill pill-2" [class.active]="activeTab() === 'CREATE'" (click)="activeTab.set('CREATE')">⚡ Create Room</button>
+      <button class="dopamine-pill pill-3" [class.active]="activeTab() === 'JOIN'" (click)="activeTab.set('JOIN')">🔑 Join with Code</button>
+      <button class="dopamine-pill pill-4" [class.active]="activeTab() === 'RECENT'" (click)="activeTab.set('RECENT')">📋 Active & History</button>
+    </div>
+  </div>
+
+  <div class="meeting-scroll-area">
+    <!-- TAB 1: CREATE MEETING FULL FORM -->
+    <div *ngIf="activeTab() === 'CREATE'" class="tab-pane-content">
+      <div class="dopamine-card create-meeting-box">
+        <div class="card-header-row">
+          <div class="icon-orb-magenta animate-float">
+            <span class="material-symbols-rounded">videocam</span>
+          </div>
+          <div class="title-meta">
+            <h2 class="card-title text-shadow-single">CREATE NEW MEETING</h2>
+            <p class="card-sub">Generate a live Zoom-style WebRTC meeting room with shareable link & code.</p>
+          </div>
+        </div>
+
+        <form class="meeting-form" (ngSubmit)="submitCreateMeeting()">
+          <div class="form-group">
+            <label class="form-label">Meeting Title *</label>
+            <input type="text" 
+                   [(ngModel)]="newMeeting.title" 
+                   name="meetingTitle" 
+                   placeholder="e.g. PJSOFONIC Sprint Review & Tech Sync" 
+                   class="dopamine-input-field" 
+                   required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Agenda / Description (Optional)</label>
+            <textarea [(ngModel)]="newMeeting.agenda" 
+                      name="meetingAgenda" 
+                      placeholder="Meeting agenda, topics to discuss, or EMS project roadmap..." 
+                      rows="3" 
+                      class="dopamine-input-field textarea-field"></textarea>
+          </div>
+
+          <div class="form-row-grid">
+            <div class="form-group">
+              <label class="form-label">Duration (Minutes)</label>
+              <select [(ngModel)]="newMeeting.durationMinutes" name="duration" class="dopamine-input-field select-field">
+                <option [value]="15">15 Minutes</option>
+                <option [value]="30">30 Minutes</option>
+                <option [value]="45">45 Minutes</option>
+                <option [value]="60">60 Minutes (1 Hour)</option>
+                <option [value]="120">120 Minutes (2 Hours)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Passcode (Optional)</label>
+              <input type="text" 
+                     [(ngModel)]="newMeeting.passCode" 
+                     name="passCode" 
+                     placeholder="e.g. 123456" 
+                     class="dopamine-input-field" />
+            </div>
+          </div>
+
+          <button type="submit" class="glow-btn submit-meeting-btn" [disabled]="!newMeeting.title.trim() || isCreating()">
+            <span class="material-symbols-rounded">rocket_launch</span>
+            <span>{{ isCreating() ? 'CREATING ROOM...' : 'CREATE & START MEETING NOW 🚀' }}</span>
+          </button>
+        </form>
+
+        <!-- Generated Meeting Info Box (if newly created) -->
+        <div *ngIf="createdMeetingData()" class="generated-meeting-banner dopamine-card card-accent-2">
+          <div class="banner-top">
+            <span class="badge-success">🎉 MEETING CREATED SUCCESSFULLY</span>
+            <button class="start-now-btn" (click)="joinMeeting(createdMeetingData().meetingCode)">
+              <span>START NOW</span>
+              <span class="material-symbols-rounded">arrow_forward</span>
+            </button>
+          </div>
+
+          <div class="meeting-details-box">
+            <div class="detail-item">
+              <span class="d-label">Meeting Code:</span>
+              <div class="d-val-copy">
+                <code class="code-tag">{{ createdMeetingData().meetingCode }}</code>
+                <button class="copy-btn" (click)="copyToClipboard(createdMeetingData().meetingCode, 'Code')">
+                  <span class="material-symbols-rounded">content_copy</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <span class="d-label">Shareable Link:</span>
+              <div class="d-val-copy">
+                <span class="link-text">{{ getMeetingUrl(createdMeetingData().meetingCode) }}</span>
+                <button class="copy-btn" (click)="copyToClipboard(getMeetingUrl(createdMeetingData().meetingCode), 'Link')">
+                  <span class="material-symbols-rounded">link</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <span class="copy-toast" *ngIf="copiedToast()">{{ copiedToast() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: JOIN WITH CODE OR LINK -->
+    <div *ngIf="activeTab() === 'JOIN'" class="tab-pane-content">
+      <div class="dopamine-card join-meeting-box">
+        <div class="card-header-row">
+          <div class="icon-orb-cyan animate-pulse-glow">
+            <span class="material-symbols-rounded">login</span>
+          </div>
+          <div class="title-meta">
+            <h2 class="card-title text-shadow-single">JOIN A MEETING</h2>
+            <p class="card-sub">Enter the Meeting Code or Paste the full link to join instantly as <strong>{{ auth.currentUser()?.fullName }}</strong>.</p>
+          </div>
+        </div>
+
+        <div class="join-input-group">
+          <label class="form-label">Meeting Code or URL *</label>
+          <div class="join-input-wrap">
+            <span class="material-symbols-rounded input-ic">tag</span>
+            <input type="text" 
+                   [(ngModel)]="joinInput" 
+                   (keyup.enter)="submitJoin()" 
+                   placeholder="e.g. pj-abc123 or https://..." 
+                   class="dopamine-input-field join-field" />
+          </div>
+          <button class="glow-btn join-submit-btn" (click)="submitJoin()" [disabled]="!joinInput.trim()">
+            <span class="material-symbols-rounded">videocam</span>
+            <span>JOIN MEETING 🚀</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ACTIVE & RECENT MEETINGS -->
+    <div *ngIf="activeTab() === 'RECENT'" class="tab-pane-content">
+      <div class="recent-meetings-section">
+        <h3 class="section-title">ACTIVE & UPCOMING ROOMS</h3>
+        
+        <div *ngIf="meetingService.upcomingMeetings().length === 0" class="empty-meetings-card dopamine-card">
+          <span class="material-symbols-rounded empty-ic animate-wiggle">videocam_off</span>
+          <h3>NO ACTIVE MEETINGS RIGHT NOW</h3>
+          <p>Create a meeting or invite registered EMS colleagues to get started.</p>
+          <button class="glow-btn" (click)="activeTab.set('CREATE')">CREATE MEETING ✨</button>
+        </div>
+
+        <div class="meetings-grid">
+          <div *ngFor="let m of meetingService.upcomingMeetings(); let i = index" 
+               class="meeting-item-card dopamine-card card-accent-{{ (i % 5) + 1 }}">
+            <div class="meeting-card-top">
+              <span class="meeting-status-badge">⚡ ACTIVE</span>
+              <span class="duration-badge">{{ m.durationMinutes }} MINS</span>
+            </div>
+
+            <h3 class="meeting-card-title text-shadow-single">{{ m.title }}</h3>
+            <p class="meeting-card-agenda" *ngIf="m.agenda">{{ m.agenda }}</p>
+
+            <div class="meeting-card-footer">
+              <div class="host-info">
+                <img [src]="m.host.avatarUrl || 'https://ui-avatars.com/api/?name=Host'" class="host-avatar" />
+                <span class="host-name">Host: {{ m.host.fullName }}</span>
+              </div>
+              <button class="glow-btn join-btn-sm" (click)="joinMeeting(m.meetingCode)">
+                <span class="material-symbols-rounded">videocam</span>
+                <span>JOIN</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

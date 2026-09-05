@@ -1,0 +1,115 @@
+<header class="pj-header glass-panel">
+  <div class="header-left">
+    <button class="icon-btn sidebar-toggle" (click)="toggleSidebarClick.emit()" title="Toggle Sidebar">
+      <span class="material-symbols-rounded">menu</span>
+    </button>
+    <div class="logo-container" routerLink="/dashboard">
+      <div class="logo-orb">
+        <div class="orb-inner"></div>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">PJSOFONIC</span>
+        <span class="brand-sub">CONNECT</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-search">
+    <div class="search-input-wrapper">
+      <span class="material-symbols-rounded search-icon">search</span>
+      <input type="text" placeholder="Search employees, chats, meetings or groups..." class="glass-input search-input" />
+      <span class="search-shortcut">⌘K</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <!-- Theme Toggle -->
+    <button class="icon-btn" (click)="theme.toggleTheme()" [title]="'Current theme: ' + theme.currentTheme()">
+      <span class="material-symbols-rounded">
+        {{ theme.currentTheme() === 'dark' ? 'light_mode' : 'dark_mode' }}
+      </span>
+    </button>
+
+    <!-- Notification Bell -->
+    <div class="notification-wrapper">
+      <button class="icon-btn notif-btn" (click)="toggleNotificationDropdown()">
+        <span class="material-symbols-rounded">notifications</span>
+        <span *ngIf="notif.unreadCount() > 0" class="badge-dot">{{ notif.unreadCount() }}</span>
+      </button>
+
+      <!-- Dropdown -->
+      <div class="dropdown-panel glass-card-static" *ngIf="isNotificationDropdownOpen()">
+        <div class="dropdown-header">
+          <span class="dropdown-title">Notifications</span>
+          <button class="text-btn" (click)="notif.markAllAsRead().subscribe()">Mark all read</button>
+        </div>
+        <div class="dropdown-body">
+          <div *ngIf="notif.notifications().length === 0" class="empty-notif">
+            <span class="material-symbols-rounded empty-icon">notifications_none</span>
+            <p>No new notifications</p>
+          </div>
+          <div *ngFor="let n of notif.notifications().slice(0, 5)" class="notif-item" [class.unread]="!n.isRead">
+            <div class="notif-icon-box">
+              <span class="material-symbols-rounded">chat_bubble</span>
+            </div>
+            <div class="notif-content">
+              <span class="notif-title">{{ n.title }}</span>
+              <span class="notif-body">{{ n.body }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-footer" routerLink="/notifications" (click)="isNotificationDropdownOpen.set(false)">
+          View all notifications
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Indicator Dropdown -->
+    <div class="status-dropdown-wrapper">
+      <button class="status-pill-btn glass-btn" (click)="toggleStatusMenu()">
+        <span class="status-indicator" [ngClass]="'status-' + (auth.currentUser()?.status?.toLowerCase() || 'offline')"></span>
+        <span class="status-label">{{ auth.currentUser()?.status || 'ONLINE' }}</span>
+        <span class="material-symbols-rounded arrow-icon">arrow_drop_down</span>
+      </button>
+
+      <div class="dropdown-menu glass-card-static" *ngIf="isStatusMenuOpen()">
+        <button *ngFor="let s of userStatuses" class="menu-item" (click)="changeStatus(s.status)">
+          <span class="status-indicator" [ngClass]="s.class"></span>
+          <span>{{ s.label }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- User Profile Dropdown -->
+    <div class="profile-dropdown-wrapper" *ngIf="auth.currentUser() as user">
+      <button class="profile-btn" (click)="toggleProfileMenu()">
+        <img [src]="user.avatarUrl" [alt]="user.fullName" class="user-avatar" />
+        <div class="user-info-text">
+          <span class="user-name">{{ user.firstName }}</span>
+          <span class="user-dept">{{ user.designation }}</span>
+        </div>
+      </button>
+
+      <div class="dropdown-menu profile-menu glass-card-static" *ngIf="isProfileMenuOpen()">
+        <div class="menu-profile-header">
+          <img [src]="user.avatarUrl" class="menu-avatar" />
+          <div>
+            <div class="header-name">{{ user.fullName }}</div>
+            <div class="header-ems-id">EMS: {{ user.employeeId }}</div>
+          </div>
+        </div>
+        <hr class="menu-divider" />
+        <button class="menu-item" routerLink="/profile" (click)="isProfileMenuOpen.set(false)">
+          <span class="material-symbols-rounded">person</span> Profile
+        </button>
+        <button class="menu-item" routerLink="/settings" (click)="isProfileMenuOpen.set(false)">
+          <span class="material-symbols-rounded">settings</span> Settings
+        </button>
+        <hr class="menu-divider" />
+        <button class="menu-item danger-item" (click)="logout()">
+          <span class="material-symbols-rounded">logout</span> Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

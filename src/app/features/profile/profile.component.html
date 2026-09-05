@@ -1,0 +1,40 @@
+<div class="dopamine-profile-page" *ngIf="auth.currentUser() as user">
+  <div class="profile-hero-card dopamine-card">
+    <div class="hero-top-row">
+      <img [src]="user.avatarUrl" class="profile-avatar-lg" />
+      <div class="hero-info">
+        <h2 class="user-name gradient-text-animated text-shadow-single">{{ user.fullName }}</h2>
+        <p class="user-role">{{ user.designation }} &bull; {{ user.departmentName || 'Technology' }}</p>
+        <div class="badge-row">
+          <span class="ems-pill">EMS: {{ user.employeeId }} ⚡</span>
+          <span class="status-pill">{{ user.customStatusMessage || '⚡ Active & Available' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="details-card dopamine-card card-accent-2">
+    <h3 class="box-title text-shadow-single">EMS OFFICIAL EMPLOYEE RECORD</h3>
+    <div class="detail-row">
+      <span class="label">Employee ID</span>
+      <span class="val">{{ user.employeeId }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Official Email</span>
+      <span class="val">{{ user.email }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Department</span>
+      <span class="val">{{ user.departmentName || 'Technology' }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Designation</span>
+      <span class="val">{{ user.designation }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Status Message</span>
+      <span class="val highlight">{{ user.customStatusMessage || '⚡ Active & Available' }}</span>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,35 @@
+<div class="notifications-page">
+  <div class="page-header glass-card">
+    <div class="header-left">
+      <h2>Notifications Center</h2>
+      <p>Real-time collaboration alerts and meeting reminders</p>
+    </div>
+    <button class="glow-btn sm" (click)="notif.markAllAsRead().subscribe()">
+      Mark All Read
+    </button>
+  </div>
+
+  <div class="notif-list-container glass-card-static">
+    <div *ngIf="notif.notifications().length === 0" class="empty-state">
+      <span class="material-symbols-rounded">notifications_off</span>
+      <p>No notifications available.</p>
+    </div>
+
+    <div *ngFor="let n of notif.notifications()" 
+         class="notif-card glass-card" 
+         [class.unread]="!n.isRead"
+         (click)="handleNotificationClick(n)">
+      <div class="notif-icon-orb">
+        <span class="material-symbols-rounded">notifications</span>
+      </div>
+      <div class="notif-body-content">
+        <div class="notif-top">
+          <h4>{{ n.title }}</h4>
+          <span class="notif-time">{{ n.createdAt | date:'mediumTime' }}</span>
+        </div>
+        <p class="notif-text">{{ n.body }}</p>
+      </div>
+      <span class="unread-dot" *ngIf="!n.isRead"></span>
+    </div>
+  </div>
+</div>

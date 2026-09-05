@@ -1,0 +1,515 @@
+<div class="dopamine-chat-workspace" [class.has-active-chat]="!!chat.activeConversation()">
+  <!-- ================= 1. CHATS LIST (MASTER PANE) ================= -->
+  <div class="dopamine-chat-list-pane" [class.hidden-on-mobile]="!!chat.activeConversation()">
+    <!-- Top Header -->
+    <div class="list-header">
+      <div class="header-main-row">
+        <h1 class="dopamine-main-title gradient-text-animated text-shadow-single">CHATS 💬</h1>
+        <div class="header-actions">
+          <button class="dopamine-act-btn group-btn" (click)="openNewGroup()" title="New Group">
+            <span class="material-symbols-rounded">group_add</span>
+          </button>
+          <button class="dopamine-act-btn new-chat-btn" (click)="openNewChat()" title="New Chat">
+            <span class="material-symbols-rounded">edit_square</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dopamine Search Bar -->
+      <div class="dopamine-search-bar">
+        <span class="material-symbols-rounded search-icon">search</span>
+        <input type="text" 
+               [ngModel]="searchQuery()" 
+               (ngModelChange)="searchQuery.set($event)" 
+               placeholder="Search EMS chats & colleagues..." 
+               class="search-input" />
+      </div>
+
+      <!-- 5 Accent Dopamine Filter Pills -->
+      <div class="filter-pills-row">
+        <button class="dopamine-pill pill-1" [class.active]="filterType() === 'ALL'" (click)="filterType.set('ALL')">✨ All</button>
+        <button class="dopamine-pill pill-2" [class.active]="filterType() === 'UNREAD'" (click)="filterType.set('UNREAD')">⚡ Unread</button>
+        <button class="dopamine-pill pill-3" [class.active]="filterType() === 'GROUPS'" (click)="filterType.set('GROUPS')">👥 Groups</button>
+        <button class="dopamine-pill pill-4" (click)="router.navigate(['/meetings'])">📞 Calls</button>
+        <button class="dopamine-pill pill-5" (click)="router.navigate(['/agents'])">🪐 Teams</button>
+        <button class="dopamine-pill pill-1" (click)="router.navigate(['/notifications'])">🔥 Updates</button>
+      </div>
+    </div>
+
+    <!-- Conversations Scroll List with Modulo Accent Rotation -->
+    <div class="conversations-scroll">
+      <div *ngIf="filteredConversations().length === 0" class="empty-chats-box dopamine-card">
+        <span class="material-symbols-rounded empty-icon animate-wiggle">forum</span>
+        <h3>NO CONVERSATIONS YET!</h3>
+        <p>Start connecting with registered EMS colleagues right now.</p>
+        <button class="glow-btn start-chat-btn" (click)="openNewChat()">START A CHAT 🚀</button>
+      </div>
+
+      <div *ngFor="let conv of filteredConversations(); let i = index" 
+           class="dopamine-chat-card card-accent-{{ (i % 5) + 1 }}"
+           [class.active]="chat.activeConversation()?.id === conv.id"
+           (click)="selectConversation(conv)">
+        <div class="avatar-wrap">
+          <img [src]="conv.avatarUrl || 'https://ui-avatars.com/api/?name=Chat'" class="cell-avatar" />
+          <span class="status-indicator online" *ngIf="conv.otherUser?.status === 'ONLINE'"></span>
+        </div>
+
+        <div class="cell-content">
+          <div class="cell-top-row">
+            <span class="cell-title text-shadow-single">{{ conv.title }}</span>
+            <span class="cell-time" *ngIf="conv.lastMessage">{{ conv.lastMessage.createdAt | date:'shortTime' }}</span>
+          </div>
+          <div class="cell-bottom-row">
+            <p class="cell-last-msg">
+              <span class="sender-prefix" *ngIf="conv.lastMessage && conv.type === 'GROUP'">{{ conv.lastMessage.sender.fullName.split(' ')[0] }}: </span>
+              {{ conv.lastMessage ? conv.lastMessage.content : 'No messages yet' }}
+            </p>
+            <div class="cell-actions-wrap" (click)="$event.stopPropagation()">
+              <span class="dopamine-unread-badge animate-bounce-subtle" *ngIf="(conv.unreadCount || 0) > 0">
+                {{ conv.unreadCount }}
+              </span>
+              <button class="cell-delete-btn" (click)="deleteConversation(conv, $event)" title="Delete">
+                <span class="material-symbols-rounded">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 2. ACTIVE CHAT ROOM (DETAIL PANE) ================= -->
+  <div class="dopamine-chat-room-pane" [class.active-on-mobile]="!!chat.activeConversation()">
+    <ng-container *ngIf="chat.activeConversation() as conv; else noChatSelected">
+      <!-- Chat Room Header -->
+      <div class="room-top-header">
+        <div class="left-section">
+          <button class="back-btn-mobile" (click)="backToChatList()">
+            <span class="material-symbols-rounded">arrow_back_ios_new</span>
+          </button>
+          <div class="room-contact-info" (click)="showInfoDrawer.set(!showInfoDrawer())">
+            <div class="avatar-wrap-sm">
+              <img [src]="conv.avatarUrl || 'https://ui-avatars.com/api/?name=Chat'" class="room-avatar" />
+              <span class="status-indicator-sm online" *ngIf="conv.otherUser?.status === 'ONLINE'"></span>
+            </div>
+            <div class="room-meta">
+              <h2 class="room-title text-shadow-single">{{ conv.title }}</h2>
+              <span class="room-status" *ngIf="conv.otherUser">
+                {{ conv.otherUser.status === 'ONLINE' ? 'ONLINE ⚡' : 'OFFLINE' }} &bull; EMS: {{ conv.otherUser.employeeId }}
+              </span>
+              <span class="room-status" *ngIf="conv.type === 'GROUP'">{{ conv.members.length }} MEMBERS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="room-header-actions">
+          <button class="room-action-btn call-btn" (click)="startMeeting()" title="Audio Call">
+            <span class="material-symbols-rounded">call</span>
+          </button>
+          <button class="room-action-btn video-btn" (click)="startMeeting()" title="Video Call">
+            <span class="material-symbols-rounded">videocam</span>
+          </button>
+          <button class="room-action-btn del-btn" (click)="deleteConversation(conv, $event)" title="Delete Conversation">
+            <span class="material-symbols-rounded">delete</span>
+          </button>
+          <button class="room-action-btn info-btn" (click)="showInfoDrawer.set(!showInfoDrawer())" title="Info">
+            <span class="material-symbols-rounded">info</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages Thread Area -->
+      <div class="messages-container" #messagesScroll>
+        <div class="encryption-notice-pill">
+          <span class="material-symbols-rounded">lock</span>
+          <span>⚡ END-TO-END ENCRYPTED WITH PJSOFONIC EMS SECURITY ⚡</span>
+        </div>
+
+        <div *ngFor="let msg of chat.activeMessages()" 
+             class="message-row"
+             [class.outgoing]="isCurrentUserSender(msg)"
+             [class.incoming]="!isCurrentUserSender(msg)">
+          
+          <div class="message-bubble" (contextmenu)="toggleReactionPicker(msg.id, $event)">
+            <!-- Group Sender Name -->
+            <span class="group-sender-name" *ngIf="conv.type === 'GROUP' && !isCurrentUserSender(msg)">
+              {{ msg.sender.fullName }}
+            </span>
+
+            <!-- Content -->
+            <div class="bubble-content">
+              <p class="text-content">{{ msg.content }}</p>
+            </div>
+
+            <!-- Footer -->
+            <div class="bubble-footer">
+              <span class="msg-timestamp">{{ msg.createdAt | date:'shortTime' }}</span>
+              <span class="read-ticks" *ngIf="isCurrentUserSender(msg)">
+                <span class="material-symbols-rounded check-icon">done_all</span>
+              </span>
+            </div>
+
+            <!-- Reaction Trigger -->
+            <button class="react-trigger-btn" (click)="toggleReactionPicker(msg.id, $event)">
+              <span class="material-symbols-rounded">add_reaction</span>
+            </button>
+
+            <!-- Reaction Popover -->
+            <div class="reaction-popover-bar" *ngIf="activeReactionMessageId() === msg.id">
+              <button *ngFor="let emoji of emojis" class="emoji-btn" (click)="addReaction(msg.id, emoji)">
+                {{ emoji }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-indicator-row" *ngIf="chat.activeTypingUser()">
+          <span class="typing-dot dot-1"></span>
+          <span class="typing-dot dot-2"></span>
+          <span class="typing-dot dot-3"></span>
+        </div>
+      </div>
+
+      <!-- Attachment Action Sheet -->
+      <div class="dopamine-attachment-sheet" *ngIf="showAttachmentSheet()">
+        <div class="sheet-action act-photo" (click)="sendQuickAttachment('PHOTO')">
+          <span class="material-symbols-rounded sheet-icon">image</span>
+          <span>PHOTOS & VIDEOS</span>
+        </div>
+        <div class="sheet-action act-doc" (click)="sendQuickAttachment('DOC')">
+          <span class="material-symbols-rounded sheet-icon">description</span>
+          <span>EMS DOCUMENT</span>
+        </div>
+        <div class="sheet-action act-meet" (click)="startMeeting()">
+          <span class="material-symbols-rounded sheet-icon">videocam</span>
+          <span>VIDEO MEETING</span>
+        </div>
+      </div>
+
+      <!-- Bottom Composer Bar -->
+      <div class="dopamine-composer-bar">
+        <button class="composer-action-btn attach-btn" (click)="showAttachmentSheet.set(!showAttachmentSheet())" title="Attachments">
+          <span class="material-symbols-rounded">add_circle</span>
+        </button>
+
+        <div class="input-field-wrap">
+          <input type="text" 
+                 [ngModel]="messageInput()" 
+                 (ngModelChange)="messageInput.set($event)" 
+                 (keydown.enter)="sendMessage()"
+                 placeholder="Type your message..." 
+                 class="dopamine-msg-input" />
+        </div>
+
+        <button *ngIf="messageInput().trim()" class="glow-btn send-btn" (click)="sendMessage()">
+          <span class="material-symbols-rounded">send</span>
+        </button>
+
+        <button *ngIf="!messageInput().trim()" class="mic-btn" (click)="sendVoiceNote()" title="Voice Note">
+          <span class="material-symbols-rounded">mic</span>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- No Chat Selected Placeholder -->
+    <ng-template #noChatSelected>
+      <div class="no-selection-placeholder">
+        <div class="placeholder-orb animate-pulse-glow">
+          <span class="material-symbols-rounded">chat</span>
+        </div>
+        <h2 class="gradient-text-animated text-shadow-double">PJSOFONIC CONNECT</h2>
+        <p>Select an ongoing conversation or start a new chat with registered EMS colleagues.</p>
+        <button class="glow-btn new-chat-cta" (click)="openNewChat()">
+          <span class="material-symbols-rounded">edit_square</span>
+          <span>START NEW CHAT 🚀</span>
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- ================= 3. RIGHT INFO DRAWER ================= -->
+  <div class="dopamine-info-drawer" *ngIf="showInfoDrawer() && chat.activeConversation() as conv">
+    <div class="drawer-top-header">
+      <h3 class="text-shadow-single">{{ conv.type === 'GROUP' ? 'GROUP INFO 👥' : 'CONTACT INFO 👤' }}</h3>
+      <button class="drawer-close-btn" (click)="showInfoDrawer.set(false)">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+
+    <div class="drawer-scroll-body">
+      <!-- Hero Header -->
+      <div class="drawer-hero-card dopamine-card">
+        <img [src]="conv.avatarUrl || 'https://ui-avatars.com/api/?name=Chat'" class="hero-avatar" />
+        <h3 class="hero-name text-shadow-single">{{ conv.title }}</h3>
+        <p class="hero-sub" *ngIf="conv.otherUser">{{ conv.otherUser.designation }} &bull; {{ conv.otherUser.departmentName || 'Technology' }}</p>
+        <span class="ems-badge" *ngIf="conv.otherUser">EMS ID: {{ conv.otherUser.employeeId }} ⚡</span>
+        <span class="ems-badge group-badge" *ngIf="conv.type === 'GROUP'">EMS Group &bull; {{ groupMembers().length || conv.members.length || 2 }} Members</span>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="drawer-action-row">
+        <button class="drawer-act-btn call-act" (click)="startMeeting()">
+          <span class="material-symbols-rounded">call</span>
+          <span>AUDIO</span>
+        </button>
+        <button class="drawer-act-btn video-act" (click)="startMeeting()">
+          <span class="material-symbols-rounded">videocam</span>
+          <span>VIDEO</span>
+        </button>
+      </div>
+
+      <!-- GROUP MEMBERS SECTION (WhatsApp Style) -->
+      <div class="drawer-section" *ngIf="conv.type === 'GROUP' || conv.groupId">
+        <div class="section-title-bar">
+          <span class="section-label">PARTICIPANTS ({{ groupMembers().length }})</span>
+          <button class="add-member-mini-btn" (click)="openAddParticipantsModal()">
+            <span class="material-symbols-rounded">person_add</span>
+            <span>+ ADD</span>
+          </button>
+        </div>
+
+        <div class="group-members-list dopamine-card">
+          <div *ngFor="let member of groupMembers()" class="group-member-item">
+            <img [src]="member.avatarUrl" class="gm-avatar" />
+            <div class="gm-meta">
+              <span class="gm-name">{{ member.fullName }} <strong *ngIf="member.id === auth.currentUser()?.id">(You)</strong></span>
+              <span class="gm-sub">{{ member.designation }} &bull; EMS: {{ member.employeeId }}</span>
+            </div>
+            <span class="role-pill" [class.admin]="member.isCreator">{{ member.isCreator ? 'ADMIN' : 'MEMBER' }}</span>
+            <button class="remove-member-btn" *ngIf="member.id !== auth.currentUser()?.id" (click)="removeParticipant(member.id)" title="Remove from group">
+              <span class="material-symbols-rounded">person_remove</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <span class="section-label">EMS SECURITY & ENCRYPTION</span>
+        <div class="section-card dopamine-card">
+          <div class="sec-row">
+            <span class="sec-title">Encryption</span>
+            <span class="sec-val">End-to-end (256-bit)</span>
+          </div>
+          <div class="sec-row">
+            <span class="sec-title">Authorization</span>
+            <span class="sec-val">PJSOFONIC EMS Live</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Action (Group or Direct Conversation) -->
+      <div class="drawer-section">
+        <button class="delete-group-action-btn" (click)="deleteConversation(conv, $event)">
+          <span class="material-symbols-rounded">delete_forever</span>
+          <span>{{ conv.type === 'GROUP' ? 'DELETE GROUP' : 'DELETE CHAT' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: NEW CHAT / LIVE EMS DIRECTORY ================= -->
+<div class="dopamine-modal-backdrop" *ngIf="showNewChatModal()" (click)="showNewChatModal.set(false)">
+  <div class="dopamine-modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <h3 class="gradient-text-animated text-shadow-single">NEW CHAT 💬</h3>
+        <span class="modal-sub">EMS REGISTERED DIRECTORY</span>
+      </div>
+      <button class="modal-close-btn" (click)="showNewChatModal.set(false)">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+
+    <!-- Top Action: Add New Contact Button (WhatsApp Style) -->
+    <div class="modal-quick-actions">
+      <button class="glow-btn add-contact-trigger-btn" (click)="openAddContact()">
+        <span class="material-symbols-rounded">person_add</span>
+        <span>+ NEW EMS CONTACT</span>
+      </button>
+      <button class="dopamine-pill pill-3" (click)="showNewChatModal.set(false); openNewGroup()">
+        <span class="material-symbols-rounded">group_add</span>
+        <span>NEW GROUP</span>
+      </button>
+    </div>
+
+    <!-- Search Box -->
+    <div class="modal-search-box">
+      <span class="material-symbols-rounded search-ic">search</span>
+      <input type="text" 
+             [ngModel]="contactSearchQuery()" 
+             (ngModelChange)="contactSearchQuery.set($event)" 
+             placeholder="Search by Employee ID or Name..." 
+             class="dopamine-modal-search" 
+             autofocus />
+    </div>
+
+    <!-- Contacts List -->
+    <div class="contacts-list-scroll">
+      <div *ngIf="filteredContacts().length === 0" class="empty-contacts-state">
+        <span class="material-symbols-rounded empty-ic animate-wiggle">person_search</span>
+        <p>NO REGISTERED EMS EMPLOYEES FOUND</p>
+        <span class="empty-hint">Click "+ NEW EMS CONTACT" above to add colleague to directory.</span>
+      </div>
+
+      <div *ngFor="let contact of filteredContacts(); let idx = index" 
+           class="contact-item contact-accent-{{ (idx % 5) + 1 }}" 
+           (click)="startDirectChat(contact)">
+        <img [src]="contact.avatarUrl" class="contact-avatar" />
+        <div class="contact-meta">
+          <span class="contact-name">{{ contact.fullName }}</span>
+          <span class="contact-sub">{{ contact.designation }} &bull; <strong class="ems-code">EMS: {{ contact.employeeId }}</strong></span>
+        </div>
+        <div class="contact-actions" (click)="$event.stopPropagation()">
+          <button class="icon-action-btn chat-act" (click)="startDirectChat(contact)" title="Direct Chat">
+            <span class="material-symbols-rounded">chat</span>
+          </button>
+          <button class="icon-action-btn del-act" (click)="deleteContact(contact, $event)" title="Remove Contact">
+            <span class="material-symbols-rounded">delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: ADD NEW CONTACT ================= -->
+<div class="dopamine-modal-backdrop" *ngIf="showAddContactModal()" (click)="showAddContactModal.set(false)">
+  <div class="dopamine-modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <h3 class="gradient-text-animated text-shadow-single">ADD CONTACT 👤</h3>
+        <span class="modal-sub">REGISTER EMS COLLEAGUE</span>
+      </div>
+      <button class="modal-close-btn" (click)="showAddContactModal.set(false)">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+
+    <form class="contact-form" (ngSubmit)="submitAddContact()">
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input type="text" [(ngModel)]="newContactName" name="fullName" placeholder="e.g. Rohit Kumar" class="dopamine-input-field" required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">EMS Employee ID *</label>
+        <input type="text" [(ngModel)]="newContactEmpId" name="employeeId" placeholder="e.g. PJ-1025 or EMS-88" class="dopamine-input-field" required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Designation / Role</label>
+        <input type="text" [(ngModel)]="newContactDesignation" name="designation" placeholder="e.g. Senior Frontend Engineer" class="dopamine-input-field" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Official Email (Optional)</label>
+        <input type="email" [(ngModel)]="newContactEmail" name="email" placeholder="e.g. rohit.kumar@pjsofonic.com" class="dopamine-input-field" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number (Optional)</label>
+        <input type="text" [(ngModel)]="newContactPhone" name="phone" placeholder="e.g. +91 98765 43210" class="dopamine-input-field" />
+      </div>
+
+      <button type="submit" class="glow-btn submit-contact-btn" [disabled]="!newContactName.trim() || !newContactEmpId.trim() || isAddingContact()">
+        <span class="material-symbols-rounded">person_add</span>
+        <span>{{ isAddingContact() ? 'SAVING CONTACT...' : 'SAVE EMS CONTACT ⚡' }}</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL: ADD PARTICIPANTS TO EXISTING GROUP ================= -->
+<div class="dopamine-modal-backdrop" *ngIf="showAddParticipantsModal()" (click)="showAddParticipantsModal.set(false)">
+  <div class="dopamine-modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <h3 class="gradient-text-animated text-shadow-single">ADD PARTICIPANTS 👥</h3>
+        <span class="modal-sub">SELECT REGISTERED EMS COLLEAGUES</span>
+      </div>
+      <button class="modal-close-btn" (click)="showAddParticipantsModal.set(false)">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+
+    <div class="group-form">
+      <div class="members-select-list">
+        <div *ngIf="availableContactsForGroup().length === 0" class="empty-contacts-state">
+          <span>All registered contacts are already in this group!</span>
+        </div>
+
+        <div *ngFor="let c of availableContactsForGroup()" 
+             class="member-select-item"
+             [class.selected]="selectedNewMemberIds().includes(c.id)"
+             (click)="toggleNewMemberSelection(c.id)">
+          <img [src]="c.avatarUrl" class="member-avatar" />
+          <div class="member-info">
+            <span class="m-name">{{ c.fullName }}</span>
+            <span class="m-sub">{{ c.designation }} &bull; EMS: {{ c.employeeId }}</span>
+          </div>
+          <span class="material-symbols-rounded check-indicator">
+            {{ selectedNewMemberIds().includes(c.id) ? 'check_circle' : 'radio_button_unchecked' }}
+          </span>
+        </div>
+      </div>
+
+      <button class="glow-btn" (click)="submitAddParticipants()" [disabled]="selectedNewMemberIds().length === 0 || isAddingParticipants()">
+        <span class="material-symbols-rounded">group_add</span>
+        <span>{{ isAddingParticipants() ? 'ADDING...' : 'ADD TO GROUP (' + selectedNewMemberIds().length + ') 🚀' }}</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: NEW GROUP ================= -->
+<div class="dopamine-modal-backdrop" *ngIf="showGroupModal()" (click)="showGroupModal.set(false)">
+  <div class="dopamine-modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <h3 class="gradient-text-animated text-shadow-single">NEW GROUP 👥</h3>
+        <span class="modal-sub">CREATE TEAM CHAT</span>
+      </div>
+      <button class="modal-close-btn" (click)="showGroupModal.set(false)">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+
+    <div class="group-form">
+      <input type="text" [(ngModel)]="groupName" placeholder="Group Name (e.g. Core Engineering)" class="dopamine-input-field" />
+      <input type="text" [(ngModel)]="groupDescription" placeholder="Description (optional)" class="dopamine-input-field" />
+
+      <label class="members-label">Select Registered Participants:</label>
+      <div class="members-select-list">
+        <div *ngIf="chat.contacts().length === 0" class="empty-contacts-state">
+          <span>No registered colleagues found</span>
+        </div>
+
+        <div *ngFor="let c of chat.contacts()" 
+             class="member-select-item"
+             [class.selected]="selectedMemberIds().includes(c.id)"
+             (click)="toggleMemberSelection(c.id)">
+          <img [src]="c.avatarUrl" class="member-avatar" />
+          <div class="member-info">
+            <span class="m-name">{{ c.fullName }}</span>
+            <span class="m-sub">{{ c.designation }} &bull; EMS: {{ c.employeeId }}</span>
+          </div>
+          <span class="material-symbols-rounded check-indicator">
+            {{ selectedMemberIds().includes(c.id) ? 'check_circle' : 'radio_button_unchecked' }}
+          </span>
+        </div>
+      </div>
+
+      <button class="glow-btn" (click)="createGroup()" [disabled]="!groupName.trim() || selectedMemberIds().length === 0">
+        CREATE GROUP 🚀
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Global Toast -->
+<div class="dopamine-floating-toast" *ngIf="contactToast()">
+  {{ contactToast() }}
+</div>
+

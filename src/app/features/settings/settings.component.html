@@ -1,0 +1,115 @@
+<div class="dopamine-settings-container">
+  <div class="settings-header">
+    <h1 class="gradient-text-animated text-shadow-single main-title">SETTINGS ⚙️</h1>
+  </div>
+
+  <div class="settings-scroll-area">
+    <!-- User Profile & Status Edit Section -->
+    <div class="profile-edit-box dopamine-card">
+      <div class="box-header-row">
+        <div class="avatar-preview-wrap">
+          <img [src]="editAvatarUrl || auth.currentUser()?.avatarUrl || 'https://ui-avatars.com/api/?name=User'" class="user-avatar-preview" />
+          <button class="change-avatar-trigger" (click)="toggleAvatarPicker()" title="Choose Avatar">
+            <span class="material-symbols-rounded">photo_camera</span>
+          </button>
+        </div>
+        <div class="profile-title-meta">
+          <h2 class="user-name-title text-shadow-single">{{ editFullName || auth.currentUser()?.fullName }}</h2>
+          <span class="ems-verified-pill">EMS ID: {{ auth.currentUser()?.employeeId }} ⚡</span>
+          <p class="current-status-display" *ngIf="editStatusMessage">
+            "{{ editStatusMessage }}"
+          </p>
+        </div>
+      </div>
+
+      <!-- Avatar Preset Picker Popover -->
+      <div class="avatar-preset-shelf" *ngIf="showAvatarPicker">
+        <span class="shelf-label">Choose Dopamine Avatar Preset:</span>
+        <div class="presets-row">
+          <img *ngFor="let av of avatarPresets" 
+               [src]="av" 
+               class="preset-av-thumb" 
+               [class.selected]="editAvatarUrl === av"
+               (click)="selectPresetAvatar(av)" />
+        </div>
+        
+        <div class="custom-avatar-url-row">
+          <input type="text" [(ngModel)]="editAvatarUrl" placeholder="Or enter Image URL (https://...)" class="dopamine-input-field sm" />
+        </div>
+      </div>
+
+      <!-- Form Inputs -->
+      <div class="edit-fields-stack">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" [(ngModel)]="editFullName" placeholder="Enter your display name" class="dopamine-input-field" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Custom Status Message</label>
+          <div class="status-input-row">
+            <input type="text" [(ngModel)]="editStatusMessage" placeholder="e.g. ⚡ Focusing on Q3 Release | Available" class="dopamine-input-field" />
+          </div>
+          <!-- Quick Status Presets -->
+          <div class="quick-status-pills">
+            <button *ngFor="let st of quickStatuses" class="quick-pill" (click)="editStatusMessage = st">{{ st }}</button>
+          </div>
+        </div>
+
+        <button class="glow-btn save-profile-btn" (click)="saveProfileChanges()" [disabled]="isSaving">
+          <span class="material-symbols-rounded">save</span>
+          <span>{{ isSaving ? 'SAVING PROFILE...' : 'SAVE & UPDATE PROFILE ✨' }}</span>
+        </button>
+
+        <span class="save-toast" *ngIf="saveToastMsg">{{ saveToastMsg }}</span>
+      </div>
+    </div>
+
+    <!-- Official EMS Info Section -->
+    <div class="ems-record-box dopamine-card card-accent-4">
+      <span class="box-heading">OFFICIAL EMS EMPLOYEE RECORD</span>
+      <div class="record-grid">
+        <div class="record-item">
+          <span class="r-label">Employee ID:</span>
+          <span class="r-val">{{ auth.currentUser()?.employeeId }}</span>
+        </div>
+        <div class="record-item">
+          <span class="r-label">Official Email:</span>
+          <span class="r-val">{{ auth.currentUser()?.email }}</span>
+        </div>
+        <div class="record-item">
+          <span class="r-label">Department:</span>
+          <span class="r-val">{{ auth.currentUser()?.departmentName || 'Technology' }}</span>
+        </div>
+        <div class="record-item">
+          <span class="r-label">Role:</span>
+          <span class="r-val">{{ auth.currentUser()?.designation || 'Specialist' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theme & Preferences -->
+    <div class="theme-section dopamine-card card-accent-3">
+      <span class="box-heading">APPEARANCE & THEME</span>
+      <div class="theme-buttons-row">
+        <button class="theme-btn" [class.active]="theme.currentTheme() === 'dark'" (click)="setTheme('dark')">
+          <span class="material-symbols-rounded">dark_mode</span>
+          <span>Maximalist Dark</span>
+        </button>
+        <button class="theme-btn" [class.active]="theme.currentTheme() === 'light'" (click)="setTheme('light')">
+          <span class="material-symbols-rounded">light_mode</span>
+          <span>Electric Light</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Logout Action -->
+    <div class="logout-box">
+      <button class="logout-action-btn" (click)="auth.logout()">
+        <span class="material-symbols-rounded">logout</span>
+        <span>LOG OUT FROM EMS CONNECT</span>
+      </button>
+    </div>
+  </div>
+</div>
+

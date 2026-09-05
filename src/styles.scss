@@ -1,0 +1,290 @@
+/* ==========================================================================
+   MAXIMALISM / DOPAMINE DESIGN SYSTEM (PJSOFONIC CONNECT)
+   Philosophy: MORE IS MORE. Sensory Overload. Visual Abundance.
+   ========================================================================== */
+
+:root {
+  /* Base Colors */
+  --bg-dark: #0D0D1A;
+  --bg-muted: #2D1B4E;
+  --text-white: #FFFFFF;
+  --border-magenta: #FF3AF2;
+
+  /* The 5 Critical Dopamine Accent Colors */
+  --accent-1: #FF3AF2; /* Magenta */
+  --accent-2: #00F5D4; /* Cyan */
+  --accent-3: #FFE600; /* Screaming Yellow */
+  --accent-4: #FF6B35; /* Electric Orange */
+  --accent-5: #7B2FFF; /* Vivid Purple */
+
+  /* Legacy variable bridges mapped to Dopamine tokens */
+  --bg-primary: #0D0D1A;
+  --bg-secondary: #2D1B4E;
+  --bg-tertiary: #1E1236;
+  --bg-glass: rgba(45, 27, 78, 0.85);
+  --bg-glass-card: rgba(45, 27, 78, 0.88);
+  --bg-glass-hover: rgba(255, 58, 242, 0.2);
+
+  --text-primary: #FFFFFF;
+  --text-secondary: #00F5D4;
+  --text-muted: rgba(255, 255, 255, 0.7);
+
+  --accent-cyan: #00F5D4;
+  --accent-gradient: linear-gradient(90deg, #FF3AF2, #7B2FFF, #00F5D4, #FFE600, #FF3AF2);
+  --accent-gradient-hover: linear-gradient(90deg, #FFE600, #FF6B35, #FF3AF2, #00F5D4);
+
+  --status-online: #00F5D4;
+  --status-away: #FFE600;
+  --status-busy: #FF3AF2;
+  --status-offline: #7B2FFF;
+
+  /* Dopamine Multi-Layer Shadow Stacks */
+  --shadow-dopamine-sm: 4px 4px 0 #00F5D4, 8px 8px 0 #FF3AF2;
+  --shadow-dopamine-md: 6px 6px 0 #FFE600, 12px 12px 0 #FF3AF2;
+  --shadow-dopamine-lg: 8px 8px 0 #00F5D4, 16px 16px 0 #FF3AF2, 24px 24px 0 #FFE600;
+  --shadow-glow-magenta: 0 0 25px rgba(255, 58, 242, 0.6), 0 0 50px rgba(0, 245, 212, 0.3);
+  --shadow-glow-cyan: 0 0 25px rgba(0, 245, 212, 0.6), 0 0 50px rgba(255, 230, 0, 0.3);
+
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  height: 100dvh;
+  min-height: -webkit-fill-available;
+  font-family: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Dynamic 100dvh wrapper for mobile browser URL bars */
+.dopamine-app-shell {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  max-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* ==========================================================================
+   MANDATORY BACKGROUND PATTERN-ON-PATTERN LAYERING
+   ========================================================================== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    /* Pattern 1: Dot Grid */
+    radial-gradient(circle, rgba(255, 58, 242, 0.18) 1.5px, transparent 1.5px),
+    /* Pattern 2: Diagonal Stripes */
+    repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255, 230, 0, 0.04) 12px, rgba(255, 230, 0, 0.04) 24px),
+    /* Pattern 3: Radial Mesh Overlaps */
+    radial-gradient(ellipse at 15% 25%, rgba(255, 58, 242, 0.22) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 75%, rgba(0, 245, 212, 0.2) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 50%, rgba(123, 47, 255, 0.25) 0%, transparent 60%);
+  background-size: 24px 24px, auto, auto, auto, auto;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   TEXT SHADOW SYSTEM
+   ========================================================================== */
+.text-shadow-single {
+  text-shadow: 2px 2px 0px var(--accent-5);
+}
+
+.text-shadow-double {
+  text-shadow: 2px 2px 0px var(--accent-5), 4px 4px 0px var(--accent-1);
+}
+
+.text-shadow-triple {
+  text-shadow: 2px 2px 0px var(--accent-5), 4px 4px 0px var(--accent-1), 6px 6px 0px var(--accent-2);
+}
+
+.text-shadow-mega {
+  text-shadow: 4px 4px 0px var(--accent-5), 8px 8px 0px var(--accent-1), 12px 12px 0px var(--accent-3);
+}
+
+/* Animated Gradient Text */
+.gradient-text-animated {
+  background: linear-gradient(90deg, #FF3AF2, #00F5D4, #FFE600, #FF6B35, #7B2FFF, #FF3AF2);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 4s linear infinite;
+  display: inline-block;
+}
+
+/* ==========================================================================
+   DOPAMINE BUTTON STYLES
+   ========================================================================== */
+.glow-btn, .btn-dopamine-primary {
+  background: linear-gradient(90deg, #FF3AF2, #7B2FFF, #00F5D4);
+  background-size: 200% auto;
+  color: #FFFFFF !important;
+  border: 4px solid #FFE600 !important;
+  border-radius: var(--radius-full) !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+  padding: 12px 26px !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 0 25px rgba(255, 58, 242, 0.6), 6px 6px 0 #00F5D4 !important;
+  transition: all 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  text-shadow: 2px 2px 0 #7B2FFF;
+
+  &:hover {
+    transform: scale(1.08) rotate(-1deg);
+    box-shadow: 0 0 40px rgba(255, 230, 0, 0.8), 10px 10px 0 #FF3AF2, 18px 18px 0 #00F5D4 !important;
+    background-position: right center;
+    border-color: #00F5D4 !important;
+  }
+
+  &:active {
+    transform: scale(0.96) rotate(0deg);
+    box-shadow: 2px 2px 0 #00F5D4 !important;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.btn-dopamine-secondary {
+  background: transparent;
+  border: 4px dashed #00F5D4;
+  color: #FFFFFF;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: #00F5D4;
+    color: #0D0D1A;
+    border-style: solid;
+    border-color: #FFE600;
+    transform: scale(1.06) rotate(1deg);
+    box-shadow: 0 0 20px rgba(0, 245, 212, 0.6), 6px 6px 0 #FF3AF2;
+  }
+}
+
+/* ==========================================================================
+   DOPAMINE CARDS & CONTAINERS
+   ========================================================================== */
+.glass-card, .dopamine-card {
+  background: rgba(45, 27, 78, 0.88) !important;
+  border: 4px solid var(--accent-1) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: 6px 6px 0 var(--accent-3), 12px 12px 0 var(--accent-2) !important;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    border-color: var(--accent-2) !important;
+    transform: scale(1.02) rotate(-0.5deg);
+    box-shadow: 8px 8px 0 var(--accent-1), 16px 16px 0 var(--accent-3), 24px 24px 0 var(--accent-5) !important;
+  }
+}
+
+.glass-card-static {
+  background: rgba(45, 27, 78, 0.9) !important;
+  border: 3px solid var(--accent-1) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: 4px 4px 0 var(--accent-2) !important;
+}
+
+/* ==========================================================================
+   KEYFRAME ANIMATIONS (MAXIMALIST MOTION)
+   ========================================================================== */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-16px) rotate(4deg); }
+}
+
+@keyframes float-reverse {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(16px) rotate(-4deg); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-4deg); }
+  50%      { transform: rotate(4deg); }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 58, 242, 0.6), 4px 4px 0 #00F5D4;
+  }
+  50% {
+    box-shadow: 0 0 45px rgba(255, 58, 242, 0.9), 0 0 30px rgba(0, 245, 212, 0.7), 8px 8px 0 #FFE600;
+  }
+}
+
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-float { animation: float 5s ease-in-out infinite; }
+.animate-float-rev { animation: float-reverse 4s ease-in-out infinite; }
+.animate-wiggle { animation: wiggle 1.2s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2.5s infinite; }
+.animate-bounce-subtle { animation: bounce-subtle 1.8s ease-in-out infinite; }
+
+/* Custom Dopamine Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0D0D1A;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #FF3AF2, #00F5D4);
+  border-radius: 9999px;
+  border: 2px solid #0D0D1A;
+}

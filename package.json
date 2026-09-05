@@ -1,0 +1,39 @@
+{
+  "name": "pjsofonic-connect-web",
+  "version": "1.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --port 4200",
+    "start:alt": "ng serve --port 4205",
+    "serve": "ng serve --open",
+    "build": "ng build --configuration production",
+    "watch": "ng build --watch --configuration development"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^19.1.0",
+    "@angular/cdk": "^19.1.0",
+    "@angular/common": "^19.1.0",
+    "@angular/compiler": "^19.1.0",
+    "@angular/core": "^19.1.0",
+    "@angular/forms": "^19.1.0",
+    "@angular/material": "^19.1.0",
+    "@angular/platform-browser": "^19.1.0",
+    "@angular/platform-browser-dynamic": "^19.1.0",
+    "@angular/router": "^19.1.0",
+    "@stomp/stompjs": "^7.0.0",
+    "lucide-angular": "^0.474.0",
+    "rxjs": "~7.8.0",
+    "sockjs-client": "^1.6.1",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^19.1.4",
+    "@angular/cli": "^19.1.4",
+    "@angular/compiler-cli": "^19.1.0",
+    "@types/node": "^18.18.0",
+    "@types/sockjs-client": "^1.5.4",
+    "typescript": "~5.6.2"
+  }
+}

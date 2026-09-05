@@ -1,0 +1,130 @@
+.dopamine-profile-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+  overflow-y: auto;
+  background: #0D0D1A;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(255, 58, 242, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(0, 245, 212, 0.08) 0%, transparent 40%),
+    radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 20px 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.profile-hero-card {
+  background: #14142B;
+  border: 3px solid #FF3AF2;
+  box-shadow: 6px 6px 0 #FFE600;
+  border-radius: 20px;
+  padding: 28px;
+
+  .hero-top-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .profile-avatar-lg {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #00F5D4;
+      box-shadow: 4px 4px 0 #7B2FFF;
+    }
+
+    .hero-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .user-name {
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: -0.3px;
+      }
+
+      .user-role {
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .badge-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+
+        .ems-pill {
+          background: #FFE600;
+          color: #0D0D1A;
+          font-weight: 900;
+          font-size: 11px;
+          padding: 3px 10px;
+          border-radius: 6px;
+          border: 1px solid #0D0D1A;
+        }
+
+        .status-pill {
+          background: #00F5D4;
+          color: #0D0D1A;
+          font-weight: 800;
+          font-size: 11px;
+          padding: 3px 10px;
+          border-radius: 6px;
+          border: 1px solid #0D0D1A;
+        }
+      }
+    }
+  }
+}
+
+.details-card {
+  background: #14142B;
+  border: 3px solid #00F5D4;
+  box-shadow: 6px 6px 0 #FF6B35;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .box-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: #FFE600;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:last-child { border-bottom: none; }
+
+    .label {
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 700;
+    }
+
+    .val {
+      color: #FFFFFF;
+      font-weight: 800;
+
+      &.highlight {
+        color: #00F5D4;
+      }
+    }
+  }
+}
+

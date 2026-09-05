@@ -1,0 +1,268 @@
+.dopamine-login-container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: #0D0D1A;
+  padding: 24px;
+}
+
+/* Mega Background Typography */
+.mega-bg-text {
+  position: absolute;
+  font-size: clamp(8rem, 20vw, 18rem);
+  font-weight: 900;
+  color: rgba(255, 58, 242, 0.04);
+  letter-spacing: -5px;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  transform: rotate(-8deg);
+}
+
+/* Floating Animated Emojis */
+.floating-emoji {
+  position: absolute;
+  font-size: clamp(28px, 4vw, 44px);
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 0 15px rgba(255, 230, 0, 0.6));
+
+  &.float-1 { top: 8%; left: 8%; animation: float 4s ease-in-out infinite; }
+  &.float-2 { top: 12%; right: 10%; animation: float-reverse 5s ease-in-out infinite; }
+  &.float-3 { bottom: 12%; left: 10%; animation: wiggle 1.5s ease-in-out infinite; }
+  &.float-4 { bottom: 15%; right: 8%; animation: bounce-subtle 2s ease-in-out infinite; }
+  &.float-5 { top: 48%; left: 4%; animation: float 6s ease-in-out infinite; }
+  &.float-6 { top: 45%; right: 5%; animation: float-reverse 4.5s ease-in-out infinite; }
+}
+
+/* Maximalist Card */
+.dopamine-login-card {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(45, 27, 78, 0.92);
+  border: 4px solid #00F5D4;
+  border-radius: 32px;
+  box-shadow: 8px 8px 0 #FFE600, 16px 16px 0 #FF3AF2;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+  backdrop-filter: blur(25px);
+  transform: rotate(-0.5deg);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: rotate(0deg) scale(1.01);
+    box-shadow: 10px 10px 0 #FFE600, 20px 20px 0 #FF3AF2, 0 0 40px rgba(0, 245, 212, 0.4);
+  }
+}
+
+/* Brand Header */
+.brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.dopamine-app-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #FF3AF2 0%, #7B2FFF 50%, #00F5D4 100%);
+  border: 3px solid #FFE600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  box-shadow: 4px 4px 0 #FF3AF2;
+
+  span {
+    font-size: 36px;
+    color: #FFFFFF;
+  }
+}
+
+.title-text {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.subtitle-badge {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #0D0D1A;
+  background: #FFE600;
+  border: 2px solid #FF3AF2;
+  border-radius: 9999px;
+  padding: 3px 12px;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+  box-shadow: 2px 2px 0 #00F5D4;
+}
+
+/* Form */
+.form-container {
+  width: 100%;
+}
+
+.prompt-box {
+  text-align: center;
+  margin-bottom: 20px;
+
+  .prompt-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #00F5D4;
+    text-shadow: 1px 1px 0 #7B2FFF;
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+
+  .prompt-desc {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 4px 0 0;
+  }
+}
+
+.dopamine-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dopamine-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: #FFE600;
+  letter-spacing: 0.8px;
+  text-shadow: 1px 1px 0 #0D0D1A;
+
+  .label-star {
+    color: #FF3AF2;
+  }
+}
+
+.field-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: rgba(13, 13, 26, 0.75);
+  border: 3px solid var(--accent-1);
+  box-shadow: 4px 4px 0 var(--accent-5);
+  transition: all 0.2s ease;
+
+  &.id-field {
+    border-color: #FF3AF2;
+    &:focus-within {
+      border-color: #00F5D4;
+      box-shadow: 0 0 20px rgba(0, 245, 212, 0.6), 6px 6px 0 #FFE600;
+    }
+  }
+
+  &.pw-field {
+    border-color: #00F5D4;
+    &:focus-within {
+      border-color: #FFE600;
+      box-shadow: 0 0 20px rgba(255, 230, 0, 0.6), 6px 6px 0 #FF3AF2;
+    }
+  }
+
+  .field-icon {
+    font-size: 22px;
+    color: #FFE600;
+  }
+
+  .dopamine-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+      font-weight: 500;
+    }
+  }
+
+  .pw-toggle-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    &:hover { color: #FFE600; }
+  }
+}
+
+/* Error Pill */
+.dopamine-error-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #FF3AF2;
+  border: 3px solid #FFE600;
+  color: #0D0D1A;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 4px 4px 0 #7B2FFF;
+
+  span:first-child {
+    font-size: 20px;
+    color: #0D0D1A;
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 8px;
+  font-size: 16px !important;
+  padding: 15px !important;
+}
+
+/* Footer */
+.dopamine-footer {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #00F5D4;
+  letter-spacing: 0.5px;
+  text-align: center;
+
+  span:first-child {
+    font-size: 16px;
+    color: #FFE600;
+  }
+}

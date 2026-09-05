@@ -1,0 +1,68 @@
+<div class="dopamine-app-shell">
+  <!-- Dynamic Top Header Bar -->
+  <header class="dopamine-top-bar">
+    <div class="top-left-profile" *ngIf="auth.currentUser() as user" [routerLink]="['/profile']">
+      <div class="dopamine-avatar-wrap animate-float">
+        <img [src]="user.avatarUrl" alt="Avatar" class="dopamine-avatar" />
+        <span class="dopamine-online-dot"></span>
+      </div>
+      <div class="user-meta">
+        <span class="user-name text-shadow-single">{{ user.fullName }}</span>
+        <span class="ems-badge-tag">EMS: {{ user.employeeId }} ⚡</span>
+      </div>
+    </div>
+
+    <!-- App Title on Desktop/Header -->
+    <div class="top-center-brand">
+      <span class="gradient-text-animated brand-logo-text text-shadow-single">PJSOFONIC</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="top-actions">
+      <button class="dopamine-icon-btn notif-btn" [routerLink]="['/notifications']" title="Notifications">
+        <span class="material-symbols-rounded">notifications</span>
+        <span class="notif-badge-pill" *ngIf="notif.unreadCount() > 0">{{ notif.unreadCount() }}</span>
+      </button>
+      <button class="dopamine-icon-btn logout-btn" (click)="auth.logout()" title="Logout">
+        <span class="material-symbols-rounded">power_settings_new</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View Area -->
+  <main class="dopamine-viewport">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- 5 Dopamine Maximalist Bottom Tabs -->
+  <nav class="dopamine-bottom-tabbar">
+    <a [routerLink]="['/chat']" class="tab-item tab-chats" [class.active]="isRouteActive('/chat')">
+      <div class="tab-icon-wrap">
+        <span class="material-symbols-rounded">chat_bubble</span>
+        <span class="tab-badge-bubble animate-bounce-subtle" *ngIf="chat.totalUnreadCount() > 0">{{ chat.totalUnreadCount() }}</span>
+      </div>
+      <span class="tab-label">CHATS</span>
+    </a>
+
+    <a [routerLink]="['/meetings']" class="tab-item tab-calls" [class.active]="isRouteActive('/meetings')">
+      <div class="tab-icon-wrap">
+        <span class="material-symbols-rounded">videocam</span>
+      </div>
+      <span class="tab-label">MEETINGS</span>
+    </a>
+
+    <a [routerLink]="['/agents']" class="tab-item tab-teams" [class.active]="isRouteActive('/agents')">
+      <div class="tab-icon-wrap">
+        <span class="material-symbols-rounded">groups_3</span>
+      </div>
+      <span class="tab-label">COMMUNITIES</span>
+    </a>
+
+    <a [routerLink]="['/settings']" class="tab-item tab-settings" [class.active]="isRouteActive('/settings') || isRouteActive('/profile')">
+      <div class="tab-icon-wrap">
+        <span class="material-symbols-rounded">tune</span>
+      </div>
+      <span class="tab-label">SETTINGS</span>
+    </a>
+  </nav>
+</div>

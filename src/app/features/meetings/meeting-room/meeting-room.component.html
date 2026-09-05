@@ -1,0 +1,149 @@
+<div class="meeting-room-shell">
+  <!-- Top Room Bar -->
+  <div class="room-top-bar dopamine-card">
+    <div class="room-meta">
+      <div class="live-pulse-dot"></div>
+      <span class="room-title text-shadow-single">{{ meeting.currentMeeting()?.title || 'PJSOFONIC Live Meeting' }}</span>
+      <span class="room-code-tag">ID: {{ meetingCode() }}</span>
+    </div>
+    <div class="room-right-info">
+      <button class="copy-link-pill" (click)="copyMeetingLink()">
+        <span class="material-symbols-rounded">link</span>
+        <span>Copy Invite Link</span>
+      </button>
+      <span class="participant-count-pill">
+        <span class="material-symbols-rounded">group</span>
+        {{ rtc.peerStreams().length + 1 }} in Call
+      </span>
+    </div>
+  </div>
+
+  <!-- Central Video Grid Shell -->
+  <div class="video-workspace">
+    <div class="video-grid" [class.with-sidebar]="isChatOpen() || isParticipantsOpen()">
+      <!-- Local User Video Tile (Zoom Style) -->
+      <div class="video-tile local-tile" [class.speaking-glow]="!rtc.isAudioMuted()">
+        <video #localVideoRef autoplay playsinline muted class="video-element"></video>
+        <div class="zoom-attendee-badge">
+          <div class="attendee-left">
+            <span class="material-symbols-rounded audio-status-ic" [class.muted]="rtc.isAudioMuted()">
+              {{ rtc.isAudioMuted() ? 'mic_off' : 'mic' }}
+            </span>
+            <span class="attendee-name">{{ auth.currentUser()?.fullName }} (You)</span>
+          </div>
+          <span class="host-pill">HOST</span>
+        </div>
+      </div>
+
+      <!-- Remote Peer Tiles (Zoom Style) -->
+      <div *ngFor="let peer of rtc.peerStreams()" class="video-tile" [class.speaking-glow]="!peer.isMuted">
+        <video [srcObject]="peer.stream" autoplay playsinline class="video-element"></video>
+        <div class="zoom-attendee-badge">
+          <div class="attendee-left">
+            <span class="material-symbols-rounded audio-status-ic" [class.muted]="peer.isMuted">
+              {{ peer.isMuted ? 'mic_off' : 'mic' }}
+            </span>
+            <span class="attendee-name">{{ peer.peerName }}</span>
+          </div>
+          <span class="participant-pill">EMS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- In-Meeting Chat Drawer -->
+    <div class="room-side-drawer dopamine-card" *ngIf="isChatOpen()">
+      <div class="drawer-header">
+        <h4 class="text-shadow-single">IN-MEETING CHAT 💬</h4>
+        <button class="icon-btn-close" (click)="isChatOpen.set(false)">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div class="chat-messages-area">
+        <div *ngFor="let m of meeting.meetingMessages()" class="room-chat-msg">
+          <span class="chat-msg-sender">{{ m.sender.fullName }}</span>
+          <p class="chat-msg-text">{{ m.message }}</p>
+        </div>
+      </div>
+      <div class="chat-input-bar">
+        <input type="text" [(ngModel)]="chatInput" (keyup.enter)="sendChat()" placeholder="Type a message to everyone..." class="dopamine-msg-input sm" />
+        <button class="glow-btn sm send-btn" (click)="sendChat()">
+          <span class="material-symbols-rounded">send</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Participants Drawer (Zoom Style) -->
+    <div class="room-side-drawer dopamine-card" *ngIf="isParticipantsOpen()">
+      <div class="drawer-header">
+        <h4 class="text-shadow-single">ATTENDEES ({{ rtc.peerStreams().length + 1 }})</h4>
+        <button class="icon-btn-close" (click)="isParticipantsOpen.set(false)">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div class="participants-list-area">
+        <div class="p-item zoom-host-item">
+          <img [src]="auth.currentUser()?.avatarUrl" class="p-avatar" />
+          <div class="p-info">
+            <span class="p-name">{{ auth.currentUser()?.fullName }} (You)</span>
+            <span class="p-role">Host &bull; EMS: {{ auth.currentUser()?.employeeId }}</span>
+          </div>
+          <span class="material-symbols-rounded mic-icon" [class.muted]="rtc.isAudioMuted()">
+            {{ rtc.isAudioMuted() ? 'mic_off' : 'mic' }}
+          </span>
+        </div>
+        <div *ngFor="let p of rtc.peerStreams()" class="p-item">
+          <div class="p-avatar-placeholder">{{ p.peerName.substring(0, 1) }}</div>
+          <div class="p-info">
+            <span class="p-name">{{ p.peerName }}</span>
+            <span class="p-role">Participant</span>
+          </div>
+          <span class="material-symbols-rounded mic-icon" [class.muted]="p.isMuted">
+            {{ p.isMuted ? 'mic_off' : 'mic' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Control Bar (Dopamine Maximalism) -->
+  <div class="room-bottom-bar dopamine-card">
+    <div class="control-group">
+      <!-- Mic Toggle -->
+      <button class="control-btn mic-btn" [class.active-danger]="rtc.isAudioMuted()" (click)="rtc.toggleAudio()" [title]="rtc.isAudioMuted() ? 'Unmute Mic' : 'Mute Mic'">
+        <span class="material-symbols-rounded">{{ rtc.isAudioMuted() ? 'mic_off' : 'mic' }}</span>
+        <span class="btn-caption">{{ rtc.isAudioMuted() ? 'Unmute' : 'Mute' }}</span>
+      </button>
+
+      <!-- Video Toggle -->
+      <button class="control-btn video-btn" [class.active-danger]="rtc.isVideoOff()" (click)="rtc.toggleVideo()" [title]="rtc.isVideoOff() ? 'Start Video' : 'Stop Video'">
+        <span class="material-symbols-rounded">{{ rtc.isVideoOff() ? 'videocam_off' : 'videocam' }}</span>
+        <span class="btn-caption">{{ rtc.isVideoOff() ? 'Start Video' : 'Stop Video' }}</span>
+      </button>
+
+      <!-- Screen Share -->
+      <button class="control-btn share-btn" [class.active-glow]="rtc.isScreenSharing()" (click)="rtc.toggleScreenShare()" title="Share Screen">
+        <span class="material-symbols-rounded">screen_share</span>
+        <span class="btn-caption">Share</span>
+      </button>
+
+      <!-- Chat Drawer -->
+      <button class="control-btn chat-toggle-btn" [class.active-glow]="isChatOpen()" (click)="toggleChat()" title="Meeting Chat">
+        <span class="material-symbols-rounded">chat</span>
+        <span class="btn-caption">Chat</span>
+      </button>
+
+      <!-- Participants -->
+      <button class="control-btn part-toggle-btn" [class.active-glow]="isParticipantsOpen()" (click)="toggleParticipants()" title="Participants">
+        <span class="material-symbols-rounded">group</span>
+        <span class="btn-caption">Attendees</span>
+      </button>
+
+      <!-- Leave Button -->
+      <button class="control-btn leave-btn" (click)="leaveMeeting()" title="End or Leave Meeting">
+        <span class="material-symbols-rounded">call_end</span>
+        <span class="btn-caption">Leave</span>
+      </button>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,257 @@
+.dopamine-app-shell {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: #0D0D1A;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ================= Top Bar ================= */
+.dopamine-top-bar {
+  height: 60px;
+  padding: 0 16px;
+  padding-top: env(safe-area-inset-top, 0px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2D1B4E;
+  border-bottom: 4px solid #FF3AF2;
+  box-shadow: 0 4px 0 #00F5D4, 0 8px 20px rgba(0, 0, 0, 0.5);
+  z-index: 50;
+}
+
+.top-left-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.dopamine-avatar-wrap {
+  position: relative;
+
+  .dopamine-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #00F5D4;
+    box-shadow: 0 0 12px rgba(0, 245, 212, 0.6);
+  }
+
+  .dopamine-online-dot {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FFE600;
+    border: 2px solid #0D0D1A;
+    box-shadow: 0 0 8px #FFE600;
+  }
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+
+  .user-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .ems-badge-tag {
+    font-size: 10px;
+    color: #0D0D1A;
+    background: #00F5D4;
+    font-weight: 900;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    margin-top: 2px;
+    box-shadow: 1px 1px 0 #FF3AF2;
+  }
+}
+
+.top-center-brand {
+  .brand-logo-text {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dopamine-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: #0D0D1A;
+  border: 2px solid #FFE600;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 2px 2px 0 #FF3AF2;
+
+  span { font-size: 20px; }
+
+  &:hover {
+    transform: scale(1.1) rotate(4deg);
+    border-color: #00F5D4;
+    box-shadow: 4px 4px 0 #FF3AF2, 0 0 15px rgba(0, 245, 212, 0.6);
+  }
+
+  &.logout-btn {
+    border-color: #FF3AF2;
+    &:hover { border-color: #FF6B35; box-shadow: 4px 4px 0 #FFE600; }
+  }
+
+  .notif-badge-pill {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #FF3AF2;
+    color: #FFFFFF;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 1px 5px;
+    border-radius: 9999px;
+    border: 1px solid #FFE600;
+    box-shadow: 0 0 8px #FF3AF2;
+  }
+}
+
+/* ================= Viewport ================= */
+.dopamine-viewport {
+  flex: 1;
+  height: calc(100dvh - 60px - 70px);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ================= 5 Dopamine Bottom Tabs ================= */
+.dopamine-bottom-tabbar {
+  height: calc(70px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #2D1B4E;
+  border-top: 4px solid #00F5D4;
+  box-shadow: 0 -4px 0 #FF3AF2, 0 -8px 25px rgba(0, 0, 0, 0.6);
+  z-index: 50;
+}
+
+.tab-item {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.6);
+  gap: 2px;
+  transition: all 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  .tab-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      font-size: 26px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-badge-bubble {
+      position: absolute;
+      top: -6px;
+      right: -12px;
+      background: #FFE600;
+      color: #0D0D1A;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      border: 2px solid #FF3AF2;
+      box-shadow: 2px 2px 0 #00F5D4;
+    }
+
+    .tab-badge-dot {
+      position: absolute;
+      top: -2px;
+      right: -4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #FF3AF2;
+      box-shadow: 0 0 8px #FF3AF2;
+    }
+  }
+
+  .tab-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* 5 Accent Rotation on Active Tabs */
+  &.active {
+    transform: translateY(-4px);
+
+    &.tab-chats {
+      color: #FF3AF2;
+      .tab-icon-wrap span { filter: drop-shadow(0 0 12px #FF3AF2); color: #FF3AF2; transform: scale(1.15) rotate(-3deg); }
+      .tab-label { text-shadow: 1px 1px 0 #00F5D4; }
+    }
+    &.tab-calls {
+      color: #00F5D4;
+      .tab-icon-wrap span { filter: drop-shadow(0 0 12px #00F5D4); color: #00F5D4; transform: scale(1.15) rotate(3deg); }
+      .tab-label { text-shadow: 1px 1px 0 #FF3AF2; }
+    }
+    &.tab-teams {
+      color: #FFE600;
+      .tab-icon-wrap span { filter: drop-shadow(0 0 12px #FFE600); color: #FFE600; transform: scale(1.15) rotate(-3deg); }
+      .tab-label { text-shadow: 1px 1px 0 #FF6B35; }
+    }
+    &.tab-updates {
+      color: #FF6B35;
+      .tab-icon-wrap span { filter: drop-shadow(0 0 12px #FF6B35); color: #FF6B35; transform: scale(1.15) rotate(3deg); }
+      .tab-label { text-shadow: 1px 1px 0 #FFE600; }
+    }
+    &.tab-settings {
+      color: #7B2FFF;
+      .tab-icon-wrap span { filter: drop-shadow(0 0 12px #7B2FFF); color: #7B2FFF; transform: scale(1.15); }
+      .tab-label { text-shadow: 1px 1px 0 #FF3AF2; }
+    }
+  }
+
+  &:hover:not(.active) {
+    color: #FFFFFF;
+    transform: translateY(-2px);
+  }
+}

@@ -1,0 +1,157 @@
+<div class="dashboard-page">
+  <!-- Welcome Banner -->
+  <div class="welcome-banner glass-card" *ngIf="auth.currentUser() as user">
+    <div class="banner-content">
+      <div class="banner-badge">
+        <span class="material-symbols-rounded">rocket_launch</span>
+        <span>PJSOFONIC EMS Enterprise Hub</span>
+      </div>
+      <h1 class="welcome-heading">Welcome back, {{ user.firstName }}!</h1>
+      <p class="welcome-desc">
+        Connect in real-time with fellow agents, launch high-definition meetings, and collaborate across departments seamlessly.
+      </p>
+      <div class="banner-actions">
+        <button class="glow-btn" (click)="startInstantMeeting()">
+          <span class="material-symbols-rounded">videocam</span> Start Instant Meeting
+        </button>
+        <button class="glass-btn" (click)="isScheduleModalOpen.set(true)">
+          <span class="material-symbols-rounded">calendar_month</span> Schedule Meeting
+        </button>
+        <button class="glass-btn" routerLink="/chat">
+          <span class="material-symbols-rounded">chat</span> Open Chat Workspace
+        </button>
+      </div>
+    </div>
+    <div class="banner-stat-box">
+      <div class="stat-pill">
+        <span class="stat-value">{{ chat.contacts().length || 6 }}</span>
+        <span class="stat-label">Active Agents</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-value">{{ meeting.upcomingMeetings().length }}</span>
+        <span class="stat-label">Upcoming Meetings</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metric Overview Cards -->
+  <div class="metric-grid">
+    <div class="metric-card glass-card">
+      <div class="metric-icon-box cyan">
+        <span class="material-symbols-rounded">badge</span>
+      </div>
+      <div class="metric-info">
+        <span class="metric-title">EMS Verification</span>
+        <span class="metric-val">Authorized</span>
+        <span class="metric-sub">ID: {{ auth.currentUser()?.employeeId }}</span>
+      </div>
+    </div>
+
+    <div class="metric-card glass-card">
+      <div class="metric-icon-box blue">
+        <span class="material-symbols-rounded">mark_chat_unread</span>
+      </div>
+      <div class="metric-info">
+        <span class="metric-title">Conversations</span>
+        <span class="metric-val">{{ chat.conversations().length }}</span>
+        <span class="metric-sub">Direct & Group Channels</span>
+      </div>
+    </div>
+
+    <div class="metric-card glass-card">
+      <div class="metric-icon-box purple">
+        <span class="material-symbols-rounded">video_camera_front</span>
+      </div>
+      <div class="metric-info">
+        <span class="metric-title">Next Meeting</span>
+        <span class="metric-val">{{ nextMeeting()?.title || 'None Scheduled' }}</span>
+        <span class="metric-sub">{{ nextMeeting()?.durationMinutes || 0 }} min duration</span>
+      </div>
+    </div>
+
+    <div class="metric-card glass-card">
+      <div class="metric-icon-box green">
+        <span class="material-symbols-rounded">wifi_tethering</span>
+      </div>
+      <div class="metric-info">
+        <span class="metric-title">STOMP & WebRTC</span>
+        <span class="metric-val">Connected</span>
+        <span class="metric-sub">Low-latency channel</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid: Upcoming Meetings & Recent Chats -->
+  <div class="dashboard-columns">
+    <!-- Left: Upcoming Meetings -->
+    <div class="dashboard-column glass-card-static">
+      <div class="column-header">
+        <div class="header-title-group">
+          <span class="material-symbols-rounded icon-cyan">videocam</span>
+          <h3>Upcoming Meetings</h3>
+        </div>
+        <button class="glass-btn sm" (click)="isScheduleModalOpen.set(true)">
+          <span class="material-symbols-rounded">add</span> Schedule
+        </button>
+      </div>
+
+      <div class="meeting-list">
+        <div *ngIf="meeting.upcomingMeetings().length === 0" class="empty-state">
+          <span class="material-symbols-rounded">event_available</span>
+          <p>No meetings scheduled for today.</p>
+        </div>
+
+        <div *ngFor="let m of meeting.upcomingMeetings()" class="meeting-item glass-card">
+          <div class="meeting-left">
+            <div class="meeting-time-box">
+              <span class="time-label">{{ m.durationMinutes }}m</span>
+              <span class="type-tag">{{ m.type }}</span>
+            </div>
+            <div class="meeting-details">
+              <h4 class="meeting-title">{{ m.title }}</h4>
+              <p class="meeting-host">Host: {{ m.host.fullName }} &bull; {{ m.participantCount }} participants</p>
+              <span class="meeting-code-badge">Code: {{ m.meetingCode }}</span>
+            </div>
+          </div>
+          <button class="glow-btn sm" (click)="joinMeeting(m.meetingCode)">
+            <span class="material-symbols-rounded">login</span> Join
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Recent Conversations & Contacts -->
+    <div class="dashboard-column glass-card-static">
+      <div class="column-header">
+        <div class="header-title-group">
+          <span class="material-symbols-rounded icon-purple">chat</span>
+          <h3>Recent Communications</h3>
+        </div>
+        <button class="glass-btn sm" routerLink="/chat">
+          View All
+        </button>
+      </div>
+
+      <div class="conv-list">
+        <div *ngIf="chat.conversations().length === 0" class="empty-state">
+          <span class="material-symbols-rounded">forum</span>
+          <p>No active conversations yet.</p>
+        </div>
+
+        <div *ngFor="let c of chat.conversations()" class="conv-item glass-card" (click)="openChat(c)">
+          <img [src]="c.avatarUrl || 'https://ui-avatars.com/api/?name=' + c.title" class="conv-avatar" />
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="conv-name">{{ c.title }}</span>
+              <span class="conv-type-badge">{{ c.type }}</span>
+            </div>
+            <p class="conv-last-msg">{{ c.lastMessage?.content || 'No messages yet' }}</p>
+          </div>
+          <div class="unread-badge" *ngIf="c.unreadCount > 0">{{ c.unreadCount }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-schedule-modal *ngIf="isScheduleModalOpen()" (closeModal)="isScheduleModalOpen.set(false)"></app-schedule-modal>

@@ -1,0 +1,73 @@
+<div class="modal-backdrop" (click)="closeModal.emit()">
+  <div class="modal-card glass-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="header-title">
+        <span class="material-symbols-rounded icon-cyan">calendar_month</span>
+        <h3>Schedule Enterprise Meeting</h3>
+      </div>
+      <button class="icon-btn" (click)="closeModal.emit()">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Meeting Title *</label>
+        <input type="text" [(ngModel)]="title" placeholder="e.g. Architecture Alignment & Sprint Review" class="glass-input" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label>Date</label>
+          <input type="date" [(ngModel)]="scheduledDate" class="glass-input" />
+        </div>
+        <div class="form-group flex-1">
+          <label>Time</label>
+          <input type="time" [(ngModel)]="scheduledTime" class="glass-input" />
+        </div>
+        <div class="form-group flex-1">
+          <label>Duration (mins)</label>
+          <select [(ngModel)]="durationMinutes" class="glass-input">
+            <option [value]="15">15 mins</option>
+            <option [value]="30">30 mins</option>
+            <option [value]="45">45 mins</option>
+            <option [value]="60">60 mins</option>
+            <option [value]="90">90 mins</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Agenda / Description</label>
+        <textarea [(ngModel)]="agenda" placeholder="1. WebRTC status&#10;2. Performance metrics&#10;3. Next sprint goals" class="glass-input" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Invite EMS Agents ({{ selectedParticipantIds().length }} selected)</label>
+        <div class="participant-select-list">
+          <div *ngFor="let contact of chat.contacts()" 
+               class="participant-item" 
+               [class.selected]="selectedParticipantIds().includes(contact.id)"
+               (click)="toggleParticipant(contact.id)">
+            <img [src]="contact.avatarUrl" class="p-avatar" />
+            <div class="p-meta">
+              <span class="p-name">{{ contact.fullName }}</span>
+              <span class="p-dept">{{ contact.designation }}</span>
+            </div>
+            <span class="material-symbols-rounded check-icon">
+              {{ selectedParticipantIds().includes(contact.id) ? 'check_circle' : 'radio_button_unchecked' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="glass-btn" (click)="closeModal.emit()">Cancel</button>
+      <button class="glow-btn" (click)="scheduleMeeting()" [disabled]="!title.trim() || isLoading()">
+        <span *ngIf="!isLoading()">Schedule Meeting</span>
+        <span *ngIf="isLoading()">Scheduling...</span>
+      </button>
+    </div>
+  </div>
+</div>
